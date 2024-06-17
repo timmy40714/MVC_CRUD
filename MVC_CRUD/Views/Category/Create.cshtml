@@ -1,0 +1,123 @@
+﻿@model Category 
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>新增類別</title>
+        <style>
+            .form-container {
+                max-width: 600px;
+                margin: 0 auto;
+                padding: 20px;
+                border: 1px solid #ccc;
+                border-radius: 10px;
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            }
+
+            .form-group {
+                margin-bottom: 15px;
+            }
+
+                .form-group label {
+                    display: block;
+                    margin-bottom: 5px;
+                }
+
+                .form-group input {
+                    width: 100%;
+                    padding: 8px;
+                    box-sizing: border-box;
+                }
+
+            .button-group {
+                display: flex;
+                justify-content: space-between;
+            }
+
+                .button-group button {
+                    background-color: #4CAF50;
+                    color: white;
+                    border: none;
+                    padding: 10px 20px;
+                    text-align: center;
+                    text-decoration: none;
+                    display: inline-block;
+                    font-size: 16px;
+                    cursor: pointer;
+                    border-radius: 4px;
+                }
+
+                    .button-group button.return {
+                        background-color: #f44336;
+                    }
+
+                    .button-group button:hover {
+                        opacity: 0.9;
+                    }
+        </style>
+    </head>
+    <body>
+    <div class="form-container">
+        @if(ViewData["ErrorMessage"] != null)
+        {
+            <div id="errorMessage" class="alert alert-danger" role="alert">
+                @ViewData["ErrorMessage"]
+            </div>
+        }
+        @if(ViewData["SuccessMessage"] != null)
+        {
+            <div id="successMessage" class="alert alert-success" role="alert">
+                @ViewData["SuccessMessage"]
+            </div>
+        }
+        <form asp-action="Create" method="post">
+            <div class="form-group">
+                <label asp-for="Name"></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="DisplayOrder"></label>
+                <input asp-for="DisplayOrder" class="form-control" />
+                <span asp-validation-for="DisplayOrder" class="text-danger"></span>
+            </div>
+            <div class="button-group">
+                <button type="submit">新增</button>
+                <button type="button" class="return" onclick="location.href='@Url.Action("Index", "Category")'">返回</button>
+            </div>
+        </form>
+    </div>
+    </body>
+@section Scripts {
+    <script>
+        // 获取消息元素
+        var successMessage = document.getElementById('successMessage');
+        var errorMessage = document.getElementById('errorMessage');
+
+        // 定义逐渐减小不透明度的函数
+        function fadeOut(element) {
+            var op = 1;  // 初始不透明度
+            var timer = setInterval(function () {
+                if (op <= 0.1) {
+                    clearInterval(timer);
+                    element.style.display = 'none'; // 可选：如果需要在动画完成后移除元素
+                }
+                element.style.opacity = op;
+                element.style.filter = 'alpha(opacity=' + op * 100 + ")";
+                op -= op * 0.1;
+            }, 50); // 逐帧间隔时间
+        }
+
+        // 等待 3 秒后逐渐隐藏成功消息和错误消息
+        setTimeout(function () {
+            if (successMessage) {
+                fadeOut(successMessage);
+            }
+            if (errorMessage) {
+                fadeOut(errorMessage);
+            }
+        }, 500); // 3000 毫秒 = 3 秒
+    </script>
+}
+
+</html>

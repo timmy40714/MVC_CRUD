@@ -1,0 +1,166 @@
+﻿@model Category
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>编辑分类</title>
+    <style>
+        .form-container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+            .form-group label {
+                display: block;
+                margin-bottom: 5px;
+            }
+
+            .form-group input {
+                width: 100%;
+                padding: 8px;
+                box-sizing: border-box;
+            }
+
+        .button-group {
+            display: flex;
+            justify-content: space-between;
+        }
+
+            .button-group button {
+                background-color: #4CAF50;
+                color: white;
+                border: none;
+                padding: 10px 20px;
+                text-align: center;
+                text-decoration: none;
+                display: inline-block;
+                font-size: 16px;
+                cursor: pointer;
+                border-radius: 4px;
+            }
+
+                .button-group button.return {
+                    background-color: #f44336;
+                }
+
+                .button-group button:hover {
+                    opacity: 0.9;
+                }
+
+        .alert {
+            margin-top: 10px;
+            padding: 15px;
+            border: 1px solid transparent;
+            border-radius: 4px;
+        }
+
+        .alert-danger {
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+            color: #721c24;
+        }
+
+        .alert-success {
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+            color: #155724;
+        }
+    </style>
+</head>
+<body>
+    <div id="app" class="form-container">
+        <div v-if="errorMessage" class="alert alert-danger" role="alert">
+            {{ errorMessage }}
+        </div>
+        <div v-if="successMessage" class="alert alert-success" role="alert">
+            {{ successMessage }}
+            @* <script>
+                if (confirm("更新成功！点击确认返回到列表页面。")) {
+                    window.location.href = '@Url.Action("Index", "Category")';
+                }
+            </script> *@
+        </div>
+        <form id="updateForm" method="post" v-on:onsubmit="submitForm">
+
+            <input type="hidden" v-model="category.id" name="id" />
+            <div class="form-group">
+                <label for="name">Name</label>
+                <input v-model="category.name" id="name" class="form-control" name="name" />
+                <span class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label for="displayOrder">Display Order</label>
+                <input v-model="category.displayOrder" id="displayOrder" class="form-control" name="displayOrder" />
+                <span class="text-danger"></span>
+            </div>
+            <div class="button-group">
+                <button type="submit">編輯</button>
+                <button type="button" class="return" v-on:click ="redirectToIndex">返回</button>
+            </div>
+        </form>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+    <script>
+        var app = new Vue({
+            el: '#app',
+            data: {
+                category: {
+                    id: @Model.Id,
+                    name: '@Html.Raw(Model.Name)',
+                    displayOrder: @Model.DisplayOrder
+                },
+                errorMessage: '',
+                successMessage: ''
+            },
+            methods: {
+                submitForm: function () {
+                    var formData = {
+                        id: this.category.id,
+                        name: this.category.name,
+                        displayOrder: this.category.displayOrder
+                    };
+
+                    // AJAX call using jQuery react
+                    $.ajax({
+                        url: '/Category/UpdateData', // Replace with your controller action URL
+                        method: 'POST',
+                        contentType: 'application/json',
+                        data: JSON.stringify(formData),
+                        success: function (response) {
+                            if (response.success) {
+                                app.successMessage = '更新成功！';
+                                if (confirm("更新成功！")) {
+                                    window.location.href = '@Url.Action("Index", "Category")';
+                                }
+                            } else {
+                                app.errorMessage = '更新失敗：' + response.errorMessage;
+                            }
+                        },
+                        error: function (xhr, status, error) {
+                            console.error('AJAX request failed:', error);
+                            app.errorMessage = '更新失敗：' + error;
+                        }
+                    });
+
+                    // Prevent default form submission
+                    return false;
+                },
+                redirectToIndex: function () {
+                    window.location.href = '@Url.Action("Index", "Category")';
+                }
+            }
+        });
+    </script>
+</body>
+</html>

@@ -14,6 +14,12 @@ namespace MVC_CRUD
 
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
                            options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+            // Register HttpClient and ApiService
+            builder.Services.AddHttpClient();
+            builder.Services.AddScoped<CallAPIHelper>();
+
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
