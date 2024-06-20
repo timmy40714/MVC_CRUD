@@ -10,16 +10,19 @@ namespace MVC_CRUD.Controllers
         private readonly ApplicationDbContext _db;
         private readonly CallAPIHelper _callAPIHelper;
         private readonly IConfiguration _config;
+        private readonly string _apiUrl;
         public CategoryController(ApplicationDbContext db, CallAPIHelper callAPIHelper, IConfiguration config)
         {
             _db = db;
             _callAPIHelper = callAPIHelper;
             _config = config;
+            _apiUrl = config["WebAPI:BaseUrl"];
         }
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            var apiUrl = "http://localhost:5000/category";
+            var endpoint = "category";
+            var apiUrl = new Uri(new Uri(_apiUrl), endpoint).ToString();
             var categories = await _callAPIHelper.GetCategoriesFromApi(apiUrl);
             categories = categories.OrderBy(x => x.DisplayOrder).ToList();
             return View(categories);
@@ -39,7 +42,8 @@ namespace MVC_CRUD.Controllers
             {
                 return View(obj);
             }
-            var apiUrl = "http://localhost:5000/category/Create";
+            var endpoint = "category/Create";
+            var apiUrl = new Uri(new Uri(_apiUrl), endpoint).ToString();
             var result = await _callAPIHelper.CreateCategoryFromApi(apiUrl, obj);
             if (result)
             {
@@ -57,14 +61,16 @@ namespace MVC_CRUD.Controllers
         [HttpGet]
         public async Task<IActionResult> Update(int id)
         {
-            var apiUrl = $"http://localhost:5000/category/Update/{id}";
+            var endpoint = $"category/Update/{id}";
+            var apiUrl = new Uri(new Uri(_apiUrl), endpoint).ToString();
             var categories = await _callAPIHelper.GetCategoryFromApi(apiUrl);
             return View(categories);
         }
         [HttpPost]
         public async Task<IActionResult> UpdateData(Category obj)
         {
-            var apiUrl = $"http://localhost:5000/category/Update/{obj.Id}";
+            var endpoint = $"category/Update/{obj.Id}";
+            var apiUrl = new Uri(new Uri(_apiUrl), endpoint).ToString();
             var result = await _callAPIHelper.UpdateCategoryFromApi(apiUrl, obj);
             if (result)
             {
@@ -80,7 +86,8 @@ namespace MVC_CRUD.Controllers
         [HttpPost]
         public async Task<IActionResult> Delete(int id)
         {
-            var apiUrl = $"http://localhost:5000/category/Delete/{id}";
+            var endpoint = $"category/Delete/{id}";
+            var apiUrl = new Uri(new Uri(_apiUrl), endpoint).ToString();
             var categories = await _callAPIHelper.DeleteCategoryFromApi(apiUrl);
             return RedirectToAction("Index");
         }

@@ -1,13 +1,14 @@
 ﻿using MVC_CRUD.Models;
+using System.Net.Http.Json;
 namespace MVC_CRUD.Data
 {
     public class CallAPIHelper
     {
-        private readonly IHttpClientFactory _httpClientFactory;
+        private readonly HttpClient _httpClient;
 
-        public CallAPIHelper(IHttpClientFactory httpClientFactory)
+        public CallAPIHelper(HttpClient httpClient)
         {
-            _httpClientFactory = httpClientFactory;
+            _httpClient = httpClient;
         }
 
         public async Task<List<Category>> GetCategoriesFromApi(string apiUrl)
@@ -16,8 +17,8 @@ namespace MVC_CRUD.Data
 
             try
             {
-                var client = _httpClientFactory.CreateClient();
-                var response = await client.GetAsync(apiUrl);
+                var response = await _httpClient.GetAsync(apiUrl);
+                response.EnsureSuccessStatusCode();
 
                 if (response.IsSuccessStatusCode)
                 {
@@ -44,8 +45,8 @@ namespace MVC_CRUD.Data
 
             try
             {
-                var client = _httpClientFactory.CreateClient();
-                var response = await client.GetAsync(apiUrl);
+                var response = await _httpClient.GetAsync(apiUrl);
+                response.EnsureSuccessStatusCode();
 
                 if (response.IsSuccessStatusCode)
                 {
@@ -67,9 +68,9 @@ namespace MVC_CRUD.Data
         }
         public async Task<bool> CreateCategoryFromApi(string apiUrl, Category obj)
         {
-            var client = _httpClientFactory.CreateClient();
-            var response = await client.PostAsJsonAsync(apiUrl, obj);
-
+            var response = await _httpClient.PostAsJsonAsync(apiUrl,obj);
+            response.EnsureSuccessStatusCode();
+            
             if (response.IsSuccessStatusCode)
             {
                 return true;
@@ -83,8 +84,8 @@ namespace MVC_CRUD.Data
         }
         public async Task<bool> UpdateCategoryFromApi(string apiUrl, Category obj)
         {
-            var client = _httpClientFactory.CreateClient();
-            var response = await client.PostAsJsonAsync(apiUrl, obj);
+            var response = await _httpClient.PostAsJsonAsync(apiUrl, obj);
+            response.EnsureSuccessStatusCode();
 
             if (response.IsSuccessStatusCode)
             {
@@ -99,8 +100,8 @@ namespace MVC_CRUD.Data
         }
         public async Task<bool> DeleteCategoryFromApi(string apiUrl)
         {
-            var client = _httpClientFactory.CreateClient();
-            var response = await client.PostAsync(apiUrl,null);
+            var response = await _httpClient.PostAsync(apiUrl,null);
+            response.EnsureSuccessStatusCode();
 
             if (response.IsSuccessStatusCode)
             {

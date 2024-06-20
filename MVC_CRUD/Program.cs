@@ -4,6 +4,7 @@ using MVC_CRUD.Data;
 namespace MVC_CRUD
 {
     public class Program
+
     {
         public static void Main(string[] args)
         {
@@ -16,8 +17,10 @@ namespace MVC_CRUD
                            options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
             // Register HttpClient and ApiService
-            builder.Services.AddHttpClient();
-            builder.Services.AddScoped<CallAPIHelper>();
+            builder.Services.AddHttpClient<CallAPIHelper>(client =>
+            {
+                client.BaseAddress = new Uri(builder.Configuration["WebAPI:BaseUrl"]);
+            });
 
 
             var app = builder.Build();
